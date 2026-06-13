@@ -2,104 +2,236 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Indicadores Ejecutivos - Datos Académicos</title>
+  <meta name="description" content="Tabla de indicadores clave por industria con datos sintéticos para fines académicos.">
+  <meta property="og:title" content="Indicadores Ejecutivos - Datos Académicos">
+  <meta property="og:description" content="Tabla de indicadores clave por industria con datos sintéticos para fines académicos.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; }
-    h1 { text-align: center; }
-    h2 { text-align: center; color: #555; font-size: 16px; margin-top: 5px; }
-    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-    th { background-color: #f2f2f2; }
-    tr:nth-child(even) { background-color: #fafafa; }
-    .nota { margin-top: 30px; font-size: 14px; text-align: center; color: #777; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #0f172a; min-height: 100vh; overflow-x: hidden;
+    }
+    .bg-aurora {
+      position: fixed; inset: 0; z-index: -2;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #1e3a8a 0%, transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, #0891b2 0%, transparent 55%),
+        radial-gradient(800px 600px at 50% 110%, #7c3aed 0%, transparent 55%),
+        linear-gradient(180deg, #0b1024 0%, #0a0f1f 100%);
+    }
+    .grid-overlay {
+      position: fixed; inset: 0; z-index: -1; opacity: 0.08;
+      background-image:
+        linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px);
+      background-size: 44px 44px;
+      -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+      mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    }
+    .orb-1 { position: fixed; top: -8rem; left: 25%; z-index: -1; width: 24rem; height: 24rem; border-radius: 50%; background: rgba(34,211,238,0.2); filter: blur(80px); pointer-events: none; }
+    .orb-2 { position: fixed; top: 33%; right: 0; z-index: -1; width: 28rem; height: 28rem; border-radius: 50%; background: rgba(217,70,239,0.15); filter: blur(80px); pointer-events: none; }
+    .top-bar { height: 4px; width: 100%; background: linear-gradient(90deg, #22d3ee, #6366f1, #d946ef); }
+    .container { max-width: 1400px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+    @media (min-width: 768px) { .container { padding: 3.5rem 2.5rem; } }
+    header { text-align: center; margin-bottom: 3rem; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 9999px;
+      border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05);
+      padding: 0.375rem 1rem; font-size: 0.875rem; font-weight: 500; color: #a5f3fc;
+      backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: 2.25rem; font-weight: 700; letter-spacing: -0.025em; margin: 0 0 0.5rem 0;
+      background: linear-gradient(135deg, #ffffff, #cffafe, #c7d2fe);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    @media (min-width: 768px) { h1 { font-size: 3rem; } }
+    h2 { font-size: 1rem; font-weight: 400; color: #cbd5e1; margin: 0 auto; max-width: 42rem; }
+    @media (min-width: 768px) { h2 { font-size: 1.125rem; } }
+    .stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 2.5rem; }
+    @media (min-width: 640px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+    .stat-card {
+      position: relative; overflow: hidden; border-radius: 1rem;
+      border: 1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.05);
+      padding: 1.25rem; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+      transition: all 0.3s ease; cursor: default;
+    }
+    .stat-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,0.20); background: rgba(255,255,255,0.10); }
+    .stat-card .glow { position: absolute; inset: -1px; border-radius: 1rem; z-index: 0; opacity: 0.6; pointer-events: none; }
+    .stat-card .glow.cyan { background: linear-gradient(135deg, rgba(34,211,238,0.30), rgba(59,130,246,0.10)); }
+    .stat-card .glow.amber { background: linear-gradient(135deg, rgba(251,191,36,0.30), rgba(249,115,22,0.10)); }
+    .stat-card .glow.fuchsia { background: linear-gradient(135deg, rgba(232,121,249,0.30), rgba(168,85,247,0.10)); }
+    .stat-card .glow.emerald { background: linear-gradient(135deg, rgba(52,211,153,0.30), rgba(20,184,166,0.10)); }
+    .stat-card .content { position: relative; z-index: 1; }
+    .stat-card .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+    .stat-card .value {
+      font-size: 1.5rem; font-weight: 700;
+      background: linear-gradient(135deg, #ffffff, #cffafe);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .stat-card .label { margin-top: 0.25rem; font-size: 0.6875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.15em; color: #cbd5e1; }
+    .table-wrapper { overflow: hidden; border-radius: 1rem; border: 1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.95); box-shadow: 0 20px 60px -15px rgba(0,0,0,0.5); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+    thead th { border-bottom: 1px solid #e5e5e5; background: #f8f9fa; padding: 0.75rem 1rem; text-align: center; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #0b4f6c; white-space: nowrap; }
+    tbody td { border-bottom: 1px solid #f0f0f0; padding: 0.75rem 1rem; text-align: center; font-size: 0.875rem; color: #0f172a; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr { transition: background 0.15s ease; }
+    tbody tr:hover { background: #f8f9fa; }
+    .td-bold { font-weight: 600; color: #0b4f6c; }
+    .td-medium { font-weight: 500; }
+    .inline-flex { display: inline-flex; align-items: center; gap: 0.5rem; }
+    .dot { display: inline-block; width: 0.625rem; height: 0.625rem; border-radius: 50%; flex-shrink: 0; }
+    .badge-pill { display: inline-flex; align-items: center; gap: 0.25rem; border-radius: 9999px; padding: 0.125rem 0.5rem; font-size: 0.75rem; font-weight: 500; white-space: nowrap; }
+    .badge-green { background: #f0fdf4; color: #15803d; }
+    .badge-yellow { background: #fefce8; color: #a16207; }
+    .badge-red { background: #fef2f2; color: #b91c1c; }
+    .dot-green { width: 0.375rem; height: 0.375rem; border-radius: 50%; background: #16a34a; }
+    .dot-yellow { width: 0.375rem; height: 0.375rem; border-radius: 50%; background: #ca8a04; }
+    .dot-red { width: 0.375rem; height: 0.375rem; border-radius: 50%; background: #dc2626; }
+    .arrow-up { width: 12px; height: 12px; flex-shrink: 0; }
+    .note-box {
+      margin-top: 2.5rem; overflow: hidden; border-radius: 1rem;
+      border: 1px solid rgba(255,255,255,0.10); background: rgba(255,255,255,0.05);
+      padding: 1.5rem; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+    }
+    .note-box .inner { max-width: 42rem; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+    .note-box p { font-size: 0.875rem; line-height: 1.625; color: #cbd5e1; margin: 0; }
+    footer { margin-top: 2rem; text-align: center; font-size: 0.75rem; color: #94a3b8; }
   </style>
 </head>
 <body>
-  <h1>Indicadores Clave por Industria</h1>
-  <h2>Datos sintéticos para fines académicos – Elaborado Marco Antonio Ramirez con la asistencia de Copilot IA</h2>
+  <div class="bg-aurora" aria-hidden="true"></div>
+  <div class="grid-overlay" aria-hidden="true"></div>
+  <div class="orb-1" aria-hidden="true"></div>
+  <div class="orb-2" aria-hidden="true"></div>
+  <div class="top-bar"></div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Industria</th>
-        <th>Ingresos (USD MM)</th>
-        <th>Crecimiento %</th>
-        <th>Empleados</th>
-        <th>País Líder</th>
-        <th>Margen EBITDA %</th>
-        <th>Participación de Mercado %</th>
-        <th>Innovación (Patentes/Año)</th>
-        <th>Satisfacción Cliente (NPS)</th>
-        <th>Riesgo ESG</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Tecnología</td>
-        <td>1200</td>
-        <td>8.5</td>
-        <td>45,000</td>
-        <td>EE.UU.</td>
-        <td>32</td>
-        <td>25</td>
-        <td>1500</td>
-        <td>72</td>
-        <td>Bajo</td>
-      </tr>
-      <tr>
-        <td>Finanzas</td>
-        <td>950</td>
-        <td>6.2</td>
-        <td>30,000</td>
-        <td>Reino Unido</td>
-        <td>28</td>
-        <td>18</td>
-        <td>400</td>
-        <td>65</td>
-        <td>Medio</td>
-      </tr>
-      <tr>
-        <td>Salud</td>
-        <td>780</td>
-        <td>7.8</td>
-        <td>25,000</td>
-        <td>Alemania</td>
-        <td>22</td>
-        <td>15</td>
-        <td>900</td>
-        <td>80</td>
-        <td>Bajo</td>
-      </tr>
-      <tr>
-        <td>Retail</td>
-        <td>640</td>
-        <td>4.1</td>
-        <td>60,000</td>
-        <td>China</td>
-        <td>12</td>
-        <td>30</td>
-        <td>200</td>
-        <td>55</td>
-        <td>Alto</td>
-      </tr>
-      <tr>
-        <td>Energía</td>
-        <td>1100</td>
-        <td>5.5</td>
-        <td>20,000</td>
-        <td>Arabia Saudita</td>
-        <td>40</td>
-        <td>35</td>
-        <td>300</td>
-        <td>60</td>
-        <td>Alto</td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="container">
+    <header>
+      <div class="badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 3v18h18" />
+          <path d="m19 9-5 5-4-4-3 3" />
+        </svg>
+        Panel de Indicadores
+      </div>
+      <h1>Indicadores Clave por Industria</h1>
+      <h2>Datos sintéticos para fines académicos – Elaborado por Marco Antonio Ramírez Larzo con la asistencia de Copilot IA y Lovable IA</h2>
+    </header>
 
-  <div class="nota">
-    Nota: Los datos presentados son ficticios y se utilizan únicamente con fines académicos.  
-    Página elaborada en colaboración con Copilot.
+    <div class="stats-grid">
+      <div class="stat-card"><div class="glow cyan"></div><div class="content"><div class="icon">🏭</div><div class="value">5</div><div class="label">Industrias</div></div></div>
+      <div class="stat-card"><div class="glow amber"></div><div class="content"><div class="icon">💰</div><div class="value">4,670 MM</div><div class="label">Ingresos Total</div></div></div>
+      <div class="stat-card"><div class="glow fuchsia"></div><div class="content"><div class="icon">👥</div><div class="value">180,000</div><div class="label">Empleados Total</div></div></div>
+      <div class="stat-card"><div class="glow emerald"></div><div class="content"><div class="icon">🌍</div><div class="value">5</div><div class="label">Países</div></div></div>
+    </div>
+
+    <div class="table-wrapper">
+      <div class="table-scroll">
+        <!-- IMPORTANTE: La estructura de esta tabla debe mantenerse intacta
+             para garantizar la compatibilidad con el webscraping desde Power BI.
+             No modificar etiquetas, clases ni estructura de la tabla. -->
+        <table>
+          <thead>
+            <tr>
+              <th>Industria</th>
+              <th>Ingresos (USD MM)</th>
+              <th>Crecimiento %</th>
+              <th>Empleados</th>
+              <th>País Líder</th>
+              <th>Margen EBITDA %</th>
+              <th>Participación de Mercado %</th>
+              <th>Innovación (Patentes/Año)</th>
+              <th>Satisfacción Cliente (NPS)</th>
+              <th>Riesgo ESG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="td-medium"><span class="inline-flex"><span class="dot" style="background:#0b4f6c"></span>Tecnología</span></td>
+              <td class="td-bold">1200</td>
+              <td><span class="badge-pill badge-green"><svg class="arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>8.5</span></td>
+              <td>45,000</td>
+              <td>EE.UU.</td>
+              <td class="td-bold">32</td>
+              <td>25</td>
+              <td class="td-bold">1500</td>
+              <td><span class="badge-pill badge-green">72</span></td>
+              <td><span class="badge-pill badge-green"><span class="dot-green"></span>Bajo</span></td>
+            </tr>
+            <tr>
+              <td class="td-medium"><span class="inline-flex"><span class="dot" style="background:#208aae"></span>Finanzas</span></td>
+              <td class="td-bold">950</td>
+              <td><span class="badge-pill badge-green"><svg class="arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>6.2</span></td>
+              <td>30,000</td>
+              <td>Reino Unido</td>
+              <td class="td-bold">28</td>
+              <td>18</td>
+              <td class="td-bold">400</td>
+              <td><span class="badge-pill badge-yellow">65</span></td>
+              <td><span class="badge-pill badge-yellow"><span class="dot-yellow"></span>Medio</span></td>
+            </tr>
+            <tr>
+              <td class="td-medium"><span class="inline-flex"><span class="dot" style="background:#78c0e0"></span>Salud</span></td>
+              <td class="td-bold">780</td>
+              <td><span class="badge-pill badge-green"><svg class="arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>7.8</span></td>
+              <td>25,000</td>
+              <td>Alemania</td>
+              <td class="td-bold">22</td>
+              <td>15</td>
+              <td class="td-bold">900</td>
+              <td><span class="badge-pill badge-green">80</span></td>
+              <td><span class="badge-pill badge-green"><span class="dot-green"></span>Bajo</span></td>
+            </tr>
+            <tr>
+              <td class="td-medium"><span class="inline-flex"><span class="dot" style="background:#b8d4e3"></span>Retail</span></td>
+              <td class="td-bold">640</td>
+              <td><span class="badge-pill badge-green"><svg class="arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>4.1</span></td>
+              <td>60,000</td>
+              <td>China</td>
+              <td class="td-bold">12</td>
+              <td>30</td>
+              <td class="td-bold">200</td>
+              <td><span class="badge-pill badge-red">55</span></td>
+              <td><span class="badge-pill badge-red"><span class="dot-red"></span>Alto</span></td>
+            </tr>
+            <tr>
+              <td class="td-medium"><span class="inline-flex"><span class="dot" style="background:#d4a373"></span>Energía</span></td>
+              <td class="td-bold">1100</td>
+              <td><span class="badge-pill badge-green"><svg class="arrow-up" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></svg>5.5</span></td>
+              <td>20,000</td>
+              <td>Arabia Saudita</td>
+              <td class="td-bold">40</td>
+              <td>35</td>
+              <td class="td-bold">300</td>
+              <td><span class="badge-pill badge-yellow">60</span></td>
+              <td><span class="badge-pill badge-red"><span class="dot-red"></span>Alto</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <div class="inner">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4" />
+          <path d="M12 8h.01" />
+        </svg>
+        <p>Los datos presentados son ficticios y se utilizan únicamente con fines académicos.<br>Página elaborada en colaboración con Copilot para el contenido y Lovable para el dise&ntilde;o.</p>
+      </div>
+    </div>
+
+    <footer>© 2026 — Marco Antonio Ramírez Larzo</footer>
   </div>
 </body>
 </html>
